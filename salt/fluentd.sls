@@ -1,25 +1,28 @@
+{% set MINOR_VERSION = '0.11' %}
+{% set VERSION = '0.11.6' %}
+
 download_fluentbit:
   archive.extracted:
     - name: /home/vagrant
-    - source: http://fluentbit.io/releases/0.11/fluent-bit-0.11.6.tar.gz
+    - source: http://fluentbit.io/releases/{{ MINOR_VERSION }}/fluent-bit-{{ VERSION }}.tar.gz
     - skip_verify: True
     - user: vagrant
 
 construct_build_dir:
   file.directory:
-    - name: /home/vagrant/fluent-bit-0.11.6/build
+    - name: /home/vagrant/fluent-bit-{{ VERSION }}/build
     - user: vagrant
 
 run_cmake:
   cmd.run:
     - name: cmake ../
-    - cwd: /home/vagrant/fluent-bit-0.11.6/build
+    - cwd: /home/vagrant/fluent-bit-{{ VERSION }}/build
     - user: vagrant
 
 make_fluentbit:
   cmd.run:
     - name: make
-    - cwd: /home/vagrant/fluent-bit-0.11.6/build
+    - cwd: /home/vagrant/fluent-bit-{{ VERSION }}/build
     - user: vagrant
 
 create_install_dir:
@@ -30,7 +33,7 @@ create_install_dir:
 install_fluentbit:
   cmd.run:
     - name: make install DESTDIR=/tmp/fluentbit
-    - cwd: /home/vagrant/fluent-bit-0.11.6/build
+    - cwd: /home/vagrant/fluent-bit-{{ VERSION }}/build
 
 copy_upstart_service:
   file.managed:
@@ -48,8 +51,8 @@ copy_systemd_service:
 
 package_fluentbit:
   cmd.run:
-    - name: fpm -s dir -t deb -n "fluentbit" -v 0.11.6 -C /tmp/fluentbit
-    - creates: /vagrant/fluentbit_0.11.6_amd64.deb
+    - name: fpm -s dir -t deb -n "fluentbit" -v {{ VERSION }} -C /tmp/fluentbit
+    - creates: /vagrant/fluentbit_{{ VERSION }}_amd64.deb
     - cwd: /vagrant
     - user: vagrant
     - require:
