@@ -18,12 +18,14 @@ run_cmake:
     - name: cmake ../
     - cwd: /home/vagrant/fluent-bit-{{ VERSION }}/build
     - user: vagrant
+    - creates: /home/vagrant/fluent-bit-{{ VERSION }}/build/Makefile
 
 make_fluentbit:
   cmd.run:
     - name: make
     - cwd: /home/vagrant/fluent-bit-{{ VERSION }}/build
     - user: vagrant
+    - creates: /home/vagrant/fluent-bit-{{ VERSION }}/build/bin/fluent-bit
 
 create_install_dir:
   file.directory:
@@ -34,6 +36,7 @@ install_fluentbit:
   cmd.run:
     - name: make install DESTDIR=/tmp/fluentbit
     - cwd: /home/vagrant/fluent-bit-{{ VERSION }}/build
+    - creates: /tmp/fluentbit/usr/local/etc/fluent-bit/parsers.conf
 
 copy_upstart_service:
   file.managed:
